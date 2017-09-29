@@ -100,7 +100,7 @@
 
 // step6
 - (void)setupViewPort {
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
     glViewport(0, 0, self.view.bounds.size.width, self.view.bounds.size.height);
 }

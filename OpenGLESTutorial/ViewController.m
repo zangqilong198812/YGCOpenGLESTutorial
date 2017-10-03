@@ -21,6 +21,7 @@
     GLuint _positionSlot;
     GLuint _textureSlot;
     GLuint _textureCoordSlot;
+    GLuint _colorSlot;
     
     ZQLShaderCompiler *shaderCompiler;
 }
@@ -114,6 +115,7 @@
     _positionSlot = [shaderCompiler attributeIndex:@"a_Position"];
     _textureSlot = [shaderCompiler uniformIndex:@"u_Texture"];
     _textureCoordSlot = [shaderCompiler attributeIndex:@"a_TexCoordIn"];
+    _colorSlot = [shaderCompiler attributeIndex:@"a_Color"];
 }
 
 // step8
@@ -124,7 +126,7 @@
         1,  -1, 0,   //右下
         -1,  1, 0,
         1   ,1, 0
-    };   //左上
+    };   
     
     glEnableVertexAttribArray(_positionSlot);
     glVertexAttribPointer(_positionSlot, 3, GL_FLOAT, GL_FALSE, 0, vertices);
@@ -138,6 +140,16 @@
     
     glEnableVertexAttribArray(_textureCoordSlot);
     glVertexAttribPointer(_textureCoordSlot, 2, GL_FLOAT, GL_FALSE, 0, coords);
+    
+    static const GLfloat colors[] = {
+        1, 0, 0, 1,
+        1, 0, 0, 1,
+        1, 0, 0, 1,
+        1, 0, 0, 1
+    };
+    
+    glEnableVertexAttribArray(_colorSlot);
+    glVertexAttribPointer(_colorSlot, 4, GL_FLOAT, GL_FALSE, 0, colors);
     
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     [_eaglContext presentRenderbuffer:GL_RENDERBUFFER];

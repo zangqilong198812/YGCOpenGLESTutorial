@@ -19,6 +19,8 @@
     GLuint _frameBuffer;
     
     GLuint _positionSlot;
+    GLuint _textureSlot;
+    GLuint _textureCoordSlot;
     
     ZQLShaderCompiler *shaderCompiler;
 }
@@ -110,20 +112,79 @@
     shaderCompiler = [[ZQLShaderCompiler alloc] initWithVertexShader:@"vertexShader.vsh" fragmentShader:@"fragmentShader.fsh"];
     [shaderCompiler prepareToDraw];
     _positionSlot = [shaderCompiler attributeIndex:@"a_Position"];
+    _textureSlot = [shaderCompiler uniformIndex:@"u_Texture"];
+    _textureCoordSlot = [shaderCompiler attributeIndex:@"a_TexCoordIn"];
 }
 
 // step8
 - (void)drawTrangle {
+    [self activeTexture];
     static const GLfloat vertices[] = {
         -1, -1, 0,   //左下
         1,  -1, 0,   //右下
-        -1, 1,  0};   //左上
+        -1,  1, 0,
+        1   ,1, 0
+    };   //左上
     
     glEnableVertexAttribArray(_positionSlot);
     glVertexAttribPointer(_positionSlot, 3, GL_FLOAT, GL_FALSE, 0, vertices);
     
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+    static const GLfloat coords[] = {
+        0, 0,
+        1, 0,
+        0, 1,
+        1, 1
+    };
+    
+    glEnableVertexAttribArray(_textureCoordSlot);
+    glVertexAttribPointer(_textureCoordSlot, 2, GL_FLOAT, GL_FALSE, 0, coords);
+    
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     [_eaglContext presentRenderbuffer:GL_RENDERBUFFER];
+}
+
+#pragma mark - Texture
+
+- (GLuint)getTextureFromImage:(UIImage *)image {
+    CGImageRef imageRef = [image CGImage];
+    size_t width = CGImageGetWidth(imageRef);
+    size_t height = CGImageGetHeight(imageRef);
+    GLubyte* textureData = (GLubyte *)malloc(width * height * 4);
+    
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+    NSUInteger bytesPerPixel = 4;
+    NSUInteger bytesPerRow = bytesPerPixel * width;
+    NSUInteger bitsPerComponent = 8;
+    CGContextRef context = CGBitmapContextCreate(textureData, width, height,
+                                                 bitsPerComponent, bytesPerRow, colorSpace,
+                                                 kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big);
+    CGContextDrawImage(context, CGRectMake(0, 0, width, height), imageRef);
+    
+    // 4
+    glEnable(GL_TEXTURE_2D);
+    GLuint texName;
+    glGenTextures(1, &texName);
+    glBindTexture(GL_TEXTURE_2D, texName);
+    
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, (GLsizei)width, (GLsizei)height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textureData);
+    
+    CGContextRelease(context);
+    CGColorSpaceRelease(colorSpace);
+    free(textureData);
+    return texName;
+}
+
+- (void)activeTexture {
+    GLuint textureID = [self getTextureFromImage:[UIImage imageNamed:@"wuyanzu.jpg"]];
+    
+    glActiveTexture(GL_TEXTURE5);
+    glBindTexture(GL_TEXTURE_2D, textureID);
+    glUniform1i(_textureSlot, 5);
 }
 
 @end

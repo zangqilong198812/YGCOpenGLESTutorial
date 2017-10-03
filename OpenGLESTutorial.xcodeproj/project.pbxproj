@@ -18,6 +18,7 @@
 		40654AD51F7E770000ED78C6 /* ZQLShaderCompiler.m in Sources */ = {isa = PBXBuildFile; fileRef = 40654AD41F7E770000ED78C6 /* ZQLShaderCompiler.m */; };
 		40654AD81F7E776A00ED78C6 /* vertexShader.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 40654AD61F7E776900ED78C6 /* vertexShader.vsh */; };
 		40654AD91F7E776A00ED78C6 /* fragmentShader.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 40654AD71F7E776900ED78C6 /* fragmentShader.fsh */; };
+		40E1735D1F83BC7E00EDD208 /* wuyanzu.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 40E1735C1F83BC5A00EDD208 /* wuyanzu.jpg */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -58,6 +59,7 @@
 		40654AD41F7E770000ED78C6 /* ZQLShaderCompiler.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZQLShaderCompiler.m; sourceTree = "<group>"; };
 		40654AD61F7E776900ED78C6 /* vertexShader.vsh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = vertexShader.vsh; sourceTree = "<group>"; };
 		40654AD71F7E776900ED78C6 /* fragmentShader.fsh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = fragmentShader.fsh; sourceTree = "<group>"; };
+		40E1735C1F83BC5A00EDD208 /* wuyanzu.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = wuyanzu.jpg; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -108,6 +110,7 @@
 		40654A9D1F7E769B00ED78C6 /* OpenGLESTutorial */ = {
 			isa = PBXGroup;
 			children = (
+				40E1735B1F8396EB00EDD208 /* Resource */,
 				40654AD01F7E76A500ED78C6 /* Util */,
 				40654A9E1F7E769B00ED78C6 /* AppDelegate.h */,
 				40654A9F1F7E769B00ED78C6 /* AppDelegate.m */,
@@ -149,6 +152,14 @@
 				40654AD61F7E776900ED78C6 /* vertexShader.vsh */,
 			);
 			path = Util;
+			sourceTree = "<group>";
+		};
+		40E1735B1F8396EB00EDD208 /* Resource */ = {
+			isa = PBXGroup;
+			children = (
+				40E1735C1F83BC5A00EDD208 /* wuyanzu.jpg */,
+			);
+			path = Resource;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -258,6 +269,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				40654AAB1F7E769C00ED78C6 /* LaunchScreen.storyboard in Resources */,
+				40E1735D1F83BC7E00EDD208 /* wuyanzu.jpg in Resources */,
 				40654AD81F7E776A00ED78C6 /* vertexShader.vsh in Resources */,
 				40654AD91F7E776A00ED78C6 /* fragmentShader.fsh in Resources */,
 				40654AA81F7E769C00ED78C6 /* Assets.xcassets in Resources */,

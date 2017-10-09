@@ -9,6 +9,7 @@
 #import "ViewController.h"
 #import <OpenGLES/ES2/gl.h>
 #import "ZQLShaderCompiler.h"
+#import <AVFoundation/AVFoundation.h>
 
 @interface ViewController ()
 {
@@ -121,13 +122,16 @@
 // step8
 - (void)drawTrangle {
     [self activeTexture];
-    static const GLfloat vertices[] = {
-        -1, -1, 0,   //左下
-        1,  -1, 0,   //右下
-        -1,  1, 0,
-        1   ,1, 0
-    };   
+    UIImage *image = [UIImage imageNamed:@"wuyanzu.jpg"];
+    CGRect realRect = AVMakeRectWithAspectRatioInsideRect(image.size, self.view.bounds);
+    CGFloat widthRatio = realRect.size.width/self.view.bounds.size.width;
+    CGFloat heightRatio = realRect.size.height/self.view.bounds.size.height;
     
+    const GLfloat vertices[] = {
+        -widthRatio, -heightRatio, 0,   //左下
+        widthRatio,  -heightRatio, 0,   //右下
+        -widthRatio, heightRatio,  0,   //左上
+        widthRatio,  heightRatio,  0 }; //右上
     glEnableVertexAttribArray(_positionSlot);
     glVertexAttribPointer(_positionSlot, 3, GL_FLOAT, GL_FALSE, 0, vertices);
     
@@ -170,6 +174,8 @@
     CGContextRef context = CGBitmapContextCreate(textureData, width, height,
                                                  bitsPerComponent, bytesPerRow, colorSpace,
                                                  kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big);
+    CGContextTranslateCTM(context, 0, height);
+    CGContextScaleCTM(context, 1.0f, -1.0f);
     CGContextDrawImage(context, CGRectMake(0, 0, width, height), imageRef);
     
     // 4

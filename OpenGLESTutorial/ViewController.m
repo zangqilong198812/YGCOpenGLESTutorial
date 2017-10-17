@@ -122,7 +122,7 @@
 // step8
 - (void)drawTrangle {
     [self activeTexture];
-    UIImage *image = [UIImage imageNamed:@"smalldaniel.jpg"];
+    UIImage *image = [UIImage imageNamed:@"wuyanzu.jpg"];
     CGRect realRect = AVMakeRectWithAspectRatioInsideRect(image.size, self.view.bounds);
     CGFloat widthRatio = realRect.size.width/self.view.bounds.size.width;
     CGFloat heightRatio = realRect.size.height/self.view.bounds.size.height;
@@ -199,7 +199,7 @@
 }
 
 - (void)activeTexture {
-    GLuint texName = [self getTextureFromImage:[UIImage imageNamed:@"smalldaniel.jpg"]];
+    GLuint texName = [self getTextureFromImage:[UIImage imageNamed:@"wuyanzu.jpg"]];
     
     glActiveTexture(GL_TEXTURE5);
     glBindTexture(GL_TEXTURE_2D, texName);

@@ -122,26 +122,27 @@
 // step8
 - (void)drawTrangle {
     [self activeTexture];
-    UIImage *image = [UIImage imageNamed:@"wuyanzu.jpg"];
+    UIImage *image = [UIImage imageNamed:@"smalldaniel.jpg"];
     CGRect realRect = AVMakeRectWithAspectRatioInsideRect(image.size, self.view.bounds);
     CGFloat widthRatio = realRect.size.width/self.view.bounds.size.width;
     CGFloat heightRatio = realRect.size.height/self.view.bounds.size.height;
     
     const GLfloat vertices[] = {
-        -widthRatio, -heightRatio, 0,   //左下
-        widthRatio,  -heightRatio, 0,   //右下
-        -widthRatio, heightRatio,  0,   //左上
-        widthRatio,  heightRatio,  0 }; //右上
+        -1, -1, 0,   //左下
+        1,  -1, 0,   //右下
+        -1, 1,  0,   //左上
+        1,  1,  0 }; //右上
     glEnableVertexAttribArray(_positionSlot);
     glVertexAttribPointer(_positionSlot, 3, GL_FLOAT, GL_FALSE, 0, vertices);
     
+    // normal
     static const GLfloat coords[] = {
         0, 0,
         1, 0,
         0, 1,
         1, 1
     };
-    
+
     glEnableVertexAttribArray(_textureCoordSlot);
     glVertexAttribPointer(_textureCoordSlot, 2, GL_FLOAT, GL_FALSE, 0, coords);
     
@@ -190,7 +191,7 @@
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, (GLsizei)width, (GLsizei)height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textureData);
-    
+    glBindTexture(GL_TEXTURE_2D, 0);
     CGContextRelease(context);
     CGColorSpaceRelease(colorSpace);
     free(textureData);
@@ -198,10 +199,10 @@
 }
 
 - (void)activeTexture {
-    GLuint textureID = [self getTextureFromImage:[UIImage imageNamed:@"wuyanzu.jpg"]];
+    GLuint texName = [self getTextureFromImage:[UIImage imageNamed:@"smalldaniel.jpg"]];
     
     glActiveTexture(GL_TEXTURE5);
-    glBindTexture(GL_TEXTURE_2D, textureID);
+    glBindTexture(GL_TEXTURE_2D, texName);
     glUniform1i(_textureSlot, 5);
 }
 

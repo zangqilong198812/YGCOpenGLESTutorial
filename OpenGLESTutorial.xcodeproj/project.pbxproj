@@ -19,6 +19,7 @@
 		40654AD81F7E776A00ED78C6 /* vertexShader.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 40654AD61F7E776900ED78C6 /* vertexShader.vsh */; };
 		40654AD91F7E776A00ED78C6 /* fragmentShader.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 40654AD71F7E776900ED78C6 /* fragmentShader.fsh */; };
 		40E173601F8927C400EDD208 /* wuyanzu.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 40E1735F1F8927C100EDD208 /* wuyanzu.jpg */; };
+		40EC22C91F8FC5AD0001F4BB /* luminance.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 40EC22C81F8FC5AD0001F4BB /* luminance.fsh */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -60,6 +61,7 @@
 		40654AD61F7E776900ED78C6 /* vertexShader.vsh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = vertexShader.vsh; sourceTree = "<group>"; };
 		40654AD71F7E776900ED78C6 /* fragmentShader.fsh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = fragmentShader.fsh; sourceTree = "<group>"; };
 		40E1735F1F8927C100EDD208 /* wuyanzu.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = wuyanzu.jpg; sourceTree = "<group>"; };
+		40EC22C81F8FC5AD0001F4BB /* luminance.fsh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = luminance.fsh; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -150,6 +152,7 @@
 				40654AD41F7E770000ED78C6 /* ZQLShaderCompiler.m */,
 				40654AD71F7E776900ED78C6 /* fragmentShader.fsh */,
 				40654AD61F7E776900ED78C6 /* vertexShader.vsh */,
+				40EC22C81F8FC5AD0001F4BB /* luminance.fsh */,
 			);
 			path = Util;
 			sourceTree = "<group>";
@@ -270,6 +273,7 @@
 			files = (
 				40654AAB1F7E769C00ED78C6 /* LaunchScreen.storyboard in Resources */,
 				40E173601F8927C400EDD208 /* wuyanzu.jpg in Resources */,
+				40EC22C91F8FC5AD0001F4BB /* luminance.fsh in Resources */,
 				40654AD81F7E776A00ED78C6 /* vertexShader.vsh in Resources */,
 				40654AD91F7E776A00ED78C6 /* fragmentShader.fsh in Resources */,
 				40654AA81F7E769C00ED78C6 /* Assets.xcassets in Resources */,

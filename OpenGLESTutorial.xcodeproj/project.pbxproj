@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		4016078A1F95E11D000AC6A3 /* smalldaniel.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 401607891F95E119000AC6A3 /* smalldaniel.jpg */; };
+		4016078D1F9A290E000AC6A3 /* GrayScaleFragmentShader.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 4016078C1F9A290E000AC6A3 /* GrayScaleFragmentShader.fsh */; };
 		40654AA01F7E769B00ED78C6 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 40654A9F1F7E769B00ED78C6 /* AppDelegate.m */; };
 		40654AA31F7E769B00ED78C6 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 40654AA21F7E769B00ED78C6 /* ViewController.m */; };
 		40654AA61F7E769B00ED78C6 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 40654AA41F7E769B00ED78C6 /* Main.storyboard */; };
@@ -19,6 +20,8 @@
 		40654AD51F7E770000ED78C6 /* ZQLShaderCompiler.m in Sources */ = {isa = PBXBuildFile; fileRef = 40654AD41F7E770000ED78C6 /* ZQLShaderCompiler.m */; };
 		40654AD81F7E776A00ED78C6 /* vertexShader.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 40654AD61F7E776900ED78C6 /* vertexShader.vsh */; };
 		40654AD91F7E776A00ED78C6 /* fragmentShader.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 40654AD71F7E776900ED78C6 /* fragmentShader.fsh */; };
+		409509891FA9F33C0075F363 /* Saturation.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 409509881FA9F33C0075F363 /* Saturation.fsh */; };
+		40AFDF561FE812DD00DB6A74 /* Brightness_GL.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 40AFDF551FE812DD00DB6A74 /* Brightness_GL.fsh */; };
 		40E173601F8927C400EDD208 /* wuyanzu.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 40E1735F1F8927C100EDD208 /* wuyanzu.jpg */; };
 		40EC22C91F8FC5AD0001F4BB /* luminance.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 40EC22C81F8FC5AD0001F4BB /* luminance.fsh */; };
 /* End PBXBuildFile section */
@@ -42,6 +45,7 @@
 
 /* Begin PBXFileReference section */
 		401607891F95E119000AC6A3 /* smalldaniel.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = smalldaniel.jpg; sourceTree = "<group>"; };
+		4016078C1F9A290E000AC6A3 /* GrayScaleFragmentShader.fsh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = GrayScaleFragmentShader.fsh; sourceTree = "<group>"; };
 		40654A9B1F7E769B00ED78C6 /* OpenGLESTutorial.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OpenGLESTutorial.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		40654A9E1F7E769B00ED78C6 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		40654A9F1F7E769B00ED78C6 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -62,6 +66,8 @@
 		40654AD41F7E770000ED78C6 /* ZQLShaderCompiler.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZQLShaderCompiler.m; sourceTree = "<group>"; };
 		40654AD61F7E776900ED78C6 /* vertexShader.vsh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = vertexShader.vsh; sourceTree = "<group>"; };
 		40654AD71F7E776900ED78C6 /* fragmentShader.fsh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = fragmentShader.fsh; sourceTree = "<group>"; };
+		409509881FA9F33C0075F363 /* Saturation.fsh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = Saturation.fsh; sourceTree = "<group>"; };
+		40AFDF551FE812DD00DB6A74 /* Brightness_GL.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = Brightness_GL.fsh; sourceTree = "<group>"; };
 		40E1735F1F8927C100EDD208 /* wuyanzu.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = wuyanzu.jpg; sourceTree = "<group>"; };
 		40EC22C81F8FC5AD0001F4BB /* luminance.fsh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = luminance.fsh; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -153,7 +159,10 @@
 				40654AD31F7E770000ED78C6 /* ZQLShaderCompiler.h */,
 				40654AD41F7E770000ED78C6 /* ZQLShaderCompiler.m */,
 				40654AD71F7E776900ED78C6 /* fragmentShader.fsh */,
+				4016078C1F9A290E000AC6A3 /* GrayScaleFragmentShader.fsh */,
+				409509881FA9F33C0075F363 /* Saturation.fsh */,
 				40654AD61F7E776900ED78C6 /* vertexShader.vsh */,
+				40AFDF551FE812DD00DB6A74 /* Brightness_GL.fsh */,
 				40EC22C81F8FC5AD0001F4BB /* luminance.fsh */,
 			);
 			path = Util;
@@ -277,11 +286,14 @@
 				40654AAB1F7E769C00ED78C6 /* LaunchScreen.storyboard in Resources */,
 				40E173601F8927C400EDD208 /* wuyanzu.jpg in Resources */,
 				40EC22C91F8FC5AD0001F4BB /* luminance.fsh in Resources */,
+				4016078D1F9A290E000AC6A3 /* GrayScaleFragmentShader.fsh in Resources */,
 				40654AD81F7E776A00ED78C6 /* vertexShader.vsh in Resources */,
 				4016078A1F95E11D000AC6A3 /* smalldaniel.jpg in Resources */,
 				40654AD91F7E776A00ED78C6 /* fragmentShader.fsh in Resources */,
+				409509891FA9F33C0075F363 /* Saturation.fsh in Resources */,
 				40654AA81F7E769C00ED78C6 /* Assets.xcassets in Resources */,
 				40654AA61F7E769B00ED78C6 /* Main.storyboard in Resources */,
+				40AFDF561FE812DD00DB6A74 /* Brightness_GL.fsh in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

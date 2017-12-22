@@ -149,7 +149,7 @@
 
 // step7
 - (void)setupShader {
-    shaderCompiler = [[ZQLShaderCompiler alloc] initWithVertexShader:@"vertexShader.vsh" fragmentShader:@"Brightness_GL.fsh"];
+    shaderCompiler = [[ZQLShaderCompiler alloc] initWithVertexShader:@"vertexShader.vsh" fragmentShader:@"fragmentShader.fsh"];
     [shaderCompiler prepareToDraw];
     _positionSlot = [shaderCompiler attributeIndex:@"a_Position"];
     _textureSlot = [shaderCompiler uniformIndex:@"u_Texture"];

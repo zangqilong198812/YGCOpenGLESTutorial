@@ -6,12 +6,12 @@
 //  Copyright © 2017年 zang qilong. All rights reserved.
 //
 
-#import "ViewController.h"
+#import "DoubleShaderController.h"
 #import <OpenGLES/ES2/gl.h>
 #import "ZQLShaderCompiler.h"
 #import <AVFoundation/AVFoundation.h>
 
-@interface ViewController ()
+@interface DoubleShaderController ()
 {
     EAGLContext *_eaglContext;
     CAEAGLLayer *_eaglLayer;
@@ -22,34 +22,45 @@
     GLuint _positionSlot;
     GLuint _textureSlot;
     GLuint _textureCoordSlot;
-    GLuint _colorSlot;
+    
+    GLuint _positionSlot2;
+    GLuint _textureSlot2;
+    GLuint _textureCoordSlot2;
     
     GLuint _offscreenFramebuffer;
+    GLuint brightnessTexture;
     
     UIImage *processImage;
     GLint width;
     GLint height;
+    GLuint texName;
     
-    ZQLShaderCompiler *shaderCompiler;
+    ZQLShaderCompiler *brightnessShader;
+    ZQLShaderCompiler *renderShader;
 }
 @property (weak, nonatomic) IBOutlet UISlider *brightSlider;
 @property (weak, nonatomic) IBOutlet UIButton *getImageButton;
 
 @end
 
-@implementation ViewController
+@implementation DoubleShaderController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    processImage = [UIImage imageNamed:@"wuyanzu.jpg"];
+ 
     [self setupOpenGLContext];
+    processImage = [UIImage imageNamed:@"wuyanzu.jpg"];
+    texName = [self getTextureFromImage:processImage];
+    
+    
     [self setupCAEAGLLayer:self.view.bounds];
     [self clearRenderBuffers];
-    [self createOffscreenBuffer:processImage];
     [self setupRenderBuffers];
-    [self setupViewPort];
-    [self setupShader];
-    [self drawTrangle];
+    [self createOffscreenBuffer:processImage];
+    [self setupRenderScreenViewPort];
+    [self setupRenderShader];
+    [self setupBrightnessShader];;
+    [self renderToScreen];
 }
 
 
@@ -119,9 +130,9 @@
     glBindFramebuffer(GL_FRAMEBUFFER, _offscreenFramebuffer);
     
     //Create the texture
-    GLuint texture;
-    glGenTextures(1, &texture);
-    glBindTexture(GL_TEXTURE_2D, texture);
+   
+    glGenTextures(1, &brightnessTexture);
+    glBindTexture(GL_TEXTURE_2D, brightnessTexture);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,  image.size.width, image.size.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -129,7 +140,7 @@
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     
     //Bind the texture to your FBO
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, brightnessTexture, 0);
     
     //Test if everything failed
     GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
@@ -141,26 +152,37 @@
 }
 
 // step6
-- (void)setupViewPort {
+- (void)setupRenderScreenViewPort {
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
     glViewport(0, 0, self.view.bounds.size.width, self.view.bounds.size.height);
 }
 
 // step7
-- (void)setupShader {
-    shaderCompiler = [[ZQLShaderCompiler alloc] initWithVertexShader:@"vertexShader.vsh" fragmentShader:@"fragmentShader.fsh"];
-    [shaderCompiler prepareToDraw];
-    _positionSlot = [shaderCompiler attributeIndex:@"a_Position"];
-    _textureSlot = [shaderCompiler uniformIndex:@"u_Texture"];
-    _textureCoordSlot = [shaderCompiler attributeIndex:@"a_TexCoordIn"];
-    _colorSlot = [shaderCompiler attributeIndex:@"a_Color"];
-    _brightness = [shaderCompiler uniformIndex:@"brightness"];
+- (void)setupBrightnessShader {
+    brightnessShader = [[ZQLShaderCompiler alloc] initWithVertexShader:@"vertexShader.vsh" fragmentShader:@"Brightness_GL.fsh"];
+    [brightnessShader prepareToDraw];
+    _positionSlot = [brightnessShader attributeIndex:@"a_Position"];
+    _textureSlot = [brightnessShader uniformIndex:@"u_Texture"];
+    _textureCoordSlot = [brightnessShader attributeIndex:@"a_TexCoordIn"];
+    _brightness = [brightnessShader uniformIndex:@"brightness"];
+}
+
+- (void)setupRenderShader {
+    renderShader = [[ZQLShaderCompiler alloc] initWithVertexShader:@"vertexShader.vsh" fragmentShader:@"fragmentShader.fsh"];
+    [renderShader prepareToDraw];
+    _positionSlot2 = [renderShader attributeIndex:@"a_Position"];
+    _textureSlot2 = [renderShader uniformIndex:@"u_Texture"];
+    _textureCoordSlot2 = [renderShader attributeIndex:@"a_TexCoordIn"];
+
 }
 
 // step8
-- (void)drawTrangle {
-    [self activeTexture];
+- (void)renderToScreen {
+    glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer);
+    [self setupRenderScreenViewPort];
+    [renderShader prepareToDraw];
+
     UIImage *image = processImage;
     CGRect realRect = AVMakeRectWithAspectRatioInsideRect(image.size, self.view.bounds);
     CGFloat widthRatio = realRect.size.width/self.view.bounds.size.width;
@@ -171,8 +193,15 @@
         widthRatio,  -heightRatio, 0,   //右下
         -widthRatio, heightRatio,  0,   //左上
         widthRatio,  heightRatio,  0 }; //右上
-    glEnableVertexAttribArray(_positionSlot);
-    glVertexAttribPointer(_positionSlot, 3, GL_FLOAT, GL_FALSE, 0, vertices);
+    
+    const GLfloat originVertices[] = {
+        -1, -1, 0,   //左下
+        1,  -1, 0,   //右下
+        -1, 1,  0,   //左上
+        1,  1,  0 }; //右上
+    
+    glEnableVertexAttribArray(_positionSlot2);
+    glVertexAttribPointer(_positionSlot2, 3, GL_FLOAT, GL_FALSE, 0, vertices);
     
     // normal
     static const GLfloat coords[] = {
@@ -181,26 +210,22 @@
         0, 1,
         1, 1
     };
+    glEnableVertexAttribArray(_textureCoordSlot2);
+    glVertexAttribPointer(_textureCoordSlot2, 2, GL_FLOAT, GL_FALSE, 0, coords);
+    
+    
+    glActiveTexture(GL_TEXTURE5);
+    glBindTexture(GL_TEXTURE_2D, brightnessTexture);
+    glUniform1i(_textureSlot2, 5);
 
-    glEnableVertexAttribArray(_textureCoordSlot);
-    glVertexAttribPointer(_textureCoordSlot, 2, GL_FLOAT, GL_FALSE, 0, coords);
-    
-    static const GLfloat colors[] = {
-        1, 0, 0, 1,
-        1, 0, 0, 1,
-        1, 0, 0, 1,
-        1, 0, 0, 1
-    };
-    
-    glEnableVertexAttribArray(_colorSlot);
-    glVertexAttribPointer(_colorSlot, 4, GL_FLOAT, GL_FALSE, 0, colors);
+  
     
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     [_eaglContext presentRenderbuffer:GL_RENDERBUFFER];
 }
 
-- (void)drawRaw {
-    [self activeTexture];
+- (void)drawRawImage {
+   // [self activeTexture];
     
     const GLfloat vertices[] = {
         -1, -1, 0,   //左下
@@ -220,16 +245,6 @@
     
     glEnableVertexAttribArray(_textureCoordSlot);
     glVertexAttribPointer(_textureCoordSlot, 2, GL_FLOAT, GL_FALSE, 0, coords);
-    
-    static const GLfloat colors[] = {
-        1, 0, 0, 1,
-        1, 0, 0, 1,
-        1, 0, 0, 1,
-        1, 0, 0, 1
-    };
-    
-    glEnableVertexAttribArray(_colorSlot);
-    glVertexAttribPointer(_colorSlot, 4, GL_FLOAT, GL_FALSE, 0, colors);
     
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
@@ -274,7 +289,7 @@
 }
 
 - (void)activeTexture {
-    GLuint texName = [self getTextureFromImage:processImage];
+    
     
     glActiveTexture(GL_TEXTURE5);
     glBindTexture(GL_TEXTURE_2D, texName);
@@ -282,18 +297,25 @@
 }
 
 - (IBAction)valueChanged:(UISlider *)sender {
+    glBindFramebuffer(GL_FRAMEBUFFER, _offscreenFramebuffer);
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
+    glViewport(0, 0, (GLsizei)processImage.size.width, (GLsizei)processImage.size.height);
     
-    [shaderCompiler prepareToDraw];
+    [brightnessShader prepareToDraw];
     
     glUniform1f(_brightness, sender.value);
     [self activeTexture];
     
-    [self drawTrangle];
+    [self drawRawImage];
+    
+    UIImage *brightnessImage = [self getImageFromBuffe:(int)processImage.size.width withHeight:(int)processImage.size.height];
+    
+    [self renderToScreen];
+    
 }
 
-- (void)getImageFromBuffe:(int)width withHeight:(int)height {
+- (UIImage *)getImageFromBuffe:(int)width withHeight:(int)height {
     GLint x = 0, y = 0;
     NSInteger dataLength = width * height * 4;
     GLubyte *data = (GLubyte*)malloc(dataLength * sizeof(GLubyte));
@@ -318,6 +340,7 @@
     CFRelease(ref);
     CFRelease(colorspace);
     CGImageRelease(iref);
+    return image;
 }
 
 - (IBAction)getImage:(id)sender {
@@ -326,14 +349,17 @@
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
     
-    [shaderCompiler prepareToDraw];
+    [brightnessShader prepareToDraw];
     
     glUniform1f(_brightness, _brightSlider.value);
     [self activeTexture];
     
-    [self drawRaw];
+    [self drawRawImage];
     
-    [self getImageFromBuffe:processImage.size.width withHeight:processImage.size.height];
+    glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer);
+    [self setupRenderScreenViewPort];
+    
+    //[self getImageFromBuffe:processImage.size.width withHeight:processImage.size.height];
 }
 
 @end

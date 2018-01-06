@@ -10,7 +10,7 @@
 		4016078A1F95E11D000AC6A3 /* smalldaniel.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 401607891F95E119000AC6A3 /* smalldaniel.jpg */; };
 		4016078D1F9A290E000AC6A3 /* GrayScaleFragmentShader.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 4016078C1F9A290E000AC6A3 /* GrayScaleFragmentShader.fsh */; };
 		40654AA01F7E769B00ED78C6 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 40654A9F1F7E769B00ED78C6 /* AppDelegate.m */; };
-		40654AA31F7E769B00ED78C6 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 40654AA21F7E769B00ED78C6 /* ViewController.m */; };
+		40654AA31F7E769B00ED78C6 /* DoubleShaderController.m in Sources */ = {isa = PBXBuildFile; fileRef = 40654AA21F7E769B00ED78C6 /* DoubleShaderController.m */; };
 		40654AA61F7E769B00ED78C6 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 40654AA41F7E769B00ED78C6 /* Main.storyboard */; };
 		40654AA81F7E769C00ED78C6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 40654AA71F7E769C00ED78C6 /* Assets.xcassets */; };
 		40654AAB1F7E769C00ED78C6 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 40654AA91F7E769C00ED78C6 /* LaunchScreen.storyboard */; };
@@ -22,6 +22,8 @@
 		40654AD91F7E776A00ED78C6 /* fragmentShader.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 40654AD71F7E776900ED78C6 /* fragmentShader.fsh */; };
 		409509891FA9F33C0075F363 /* Saturation.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 409509881FA9F33C0075F363 /* Saturation.fsh */; };
 		40AFDF561FE812DD00DB6A74 /* Brightness_GL.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 40AFDF551FE812DD00DB6A74 /* Brightness_GL.fsh */; };
+		40C374792000D53300AC9C42 /* ListTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 40C374772000D53300AC9C42 /* ListTableViewController.m */; };
+		40C3747E2000D63200AC9C42 /* SingleShaderViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 40C3747C2000D63200AC9C42 /* SingleShaderViewController.m */; };
 		40E173601F8927C400EDD208 /* wuyanzu.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 40E1735F1F8927C100EDD208 /* wuyanzu.jpg */; };
 		40EC22C91F8FC5AD0001F4BB /* luminance.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 40EC22C81F8FC5AD0001F4BB /* luminance.fsh */; };
 /* End PBXBuildFile section */
@@ -49,8 +51,7 @@
 		40654A9B1F7E769B00ED78C6 /* OpenGLESTutorial.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OpenGLESTutorial.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		40654A9E1F7E769B00ED78C6 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		40654A9F1F7E769B00ED78C6 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		40654AA11F7E769B00ED78C6 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		40654AA21F7E769B00ED78C6 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		40654AA21F7E769B00ED78C6 /* DoubleShaderController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DoubleShaderController.m; sourceTree = "<group>"; };
 		40654AA51F7E769B00ED78C6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		40654AA71F7E769C00ED78C6 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		40654AAA1F7E769C00ED78C6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -68,6 +69,11 @@
 		40654AD71F7E776900ED78C6 /* fragmentShader.fsh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = fragmentShader.fsh; sourceTree = "<group>"; };
 		409509881FA9F33C0075F363 /* Saturation.fsh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = Saturation.fsh; sourceTree = "<group>"; };
 		40AFDF551FE812DD00DB6A74 /* Brightness_GL.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = Brightness_GL.fsh; sourceTree = "<group>"; };
+		40C374762000D53300AC9C42 /* ListTableViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ListTableViewController.h; sourceTree = "<group>"; };
+		40C374772000D53300AC9C42 /* ListTableViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ListTableViewController.m; sourceTree = "<group>"; };
+		40C3747B2000D63200AC9C42 /* SingleShaderViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SingleShaderViewController.h; sourceTree = "<group>"; };
+		40C3747C2000D63200AC9C42 /* SingleShaderViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SingleShaderViewController.m; sourceTree = "<group>"; };
+		40C374812000EFF800AC9C42 /* DoubleShaderController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DoubleShaderController.h; sourceTree = "<group>"; };
 		40E1735F1F8927C100EDD208 /* wuyanzu.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = wuyanzu.jpg; sourceTree = "<group>"; };
 		40EC22C81F8FC5AD0001F4BB /* luminance.fsh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = luminance.fsh; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -124,8 +130,12 @@
 				40654AD01F7E76A500ED78C6 /* Util */,
 				40654A9E1F7E769B00ED78C6 /* AppDelegate.h */,
 				40654A9F1F7E769B00ED78C6 /* AppDelegate.m */,
-				40654AA11F7E769B00ED78C6 /* ViewController.h */,
-				40654AA21F7E769B00ED78C6 /* ViewController.m */,
+				40C374762000D53300AC9C42 /* ListTableViewController.h */,
+				40C374772000D53300AC9C42 /* ListTableViewController.m */,
+				40C374812000EFF800AC9C42 /* DoubleShaderController.h */,
+				40654AA21F7E769B00ED78C6 /* DoubleShaderController.m */,
+				40C3747B2000D63200AC9C42 /* SingleShaderViewController.h */,
+				40C3747C2000D63200AC9C42 /* SingleShaderViewController.m */,
 				40654AA41F7E769B00ED78C6 /* Main.storyboard */,
 				40654AA71F7E769C00ED78C6 /* Assets.xcassets */,
 				40654AA91F7E769C00ED78C6 /* LaunchScreen.storyboard */,
@@ -318,10 +328,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				40654AA31F7E769B00ED78C6 /* ViewController.m in Sources */,
+				40654AA31F7E769B00ED78C6 /* DoubleShaderController.m in Sources */,
 				40654AAE1F7E769C00ED78C6 /* main.m in Sources */,
+				40C3747E2000D63200AC9C42 /* SingleShaderViewController.m in Sources */,
 				40654AA01F7E769B00ED78C6 /* AppDelegate.m in Sources */,
 				40654AD51F7E770000ED78C6 /* ZQLShaderCompiler.m in Sources */,
+				40C374792000D53300AC9C42 /* ListTableViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

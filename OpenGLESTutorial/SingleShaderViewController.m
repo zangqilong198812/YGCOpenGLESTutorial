@@ -42,7 +42,7 @@
     [self setupOpenGLContext];
     [self setupCAEAGLLayer:self.view.bounds];
     [self clearRenderBuffers];
-    [self createOffscreenBuffer:processImage];
+    [self createBrightnessFrameBuffer:processImage.size];
     [self setupRenderBuffers];
     [self setupViewPort];
     [self setupShader];
@@ -106,7 +106,7 @@
     }
 }
 
-- (void)createOffscreenBuffer:(UIImage *)image {
+- (void)createBrightnessFrameBuffer:(CGSize)imageSize {
     glGenFramebuffers(1, &_offscreenFramebuffer);
     glBindFramebuffer(GL_FRAMEBUFFER, _offscreenFramebuffer);
     
@@ -114,7 +114,7 @@
     GLuint texture;
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,  image.size.width, image.size.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,  imageSize.width, imageSize.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);

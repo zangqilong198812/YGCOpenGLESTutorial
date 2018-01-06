@@ -27,7 +27,7 @@
     GLuint _textureSlot2;
     GLuint _textureCoordSlot2;
     
-    GLuint _offscreenFramebuffer;
+    GLuint _brightnessFramebuffer;
     GLuint brightnessTexture;
     
     UIImage *processImage;
@@ -56,7 +56,7 @@
     [self setupCAEAGLLayer:self.view.bounds];
     [self clearRenderBuffers];
     [self setupRenderBuffers];
-    [self createOffscreenBuffer:processImage];
+    [self createBrightnessFrameBuffer:processImage];
     [self setupRenderScreenViewPort];
     [self setupRenderShader];
     [self setupBrightnessShader];;
@@ -125,9 +125,9 @@
     }
 }
 
-- (void)createOffscreenBuffer:(UIImage *)image {
-    glGenFramebuffers(1, &_offscreenFramebuffer);
-    glBindFramebuffer(GL_FRAMEBUFFER, _offscreenFramebuffer);
+- (void)createBrightnessFrameBuffer:(UIImage *)image {
+    glGenFramebuffers(1, &_brightnessFramebuffer);
+    glBindFramebuffer(GL_FRAMEBUFFER, _brightnessFramebuffer);
     
     //Create the texture
    
@@ -194,11 +194,11 @@
         -widthRatio, heightRatio,  0,   //左上
         widthRatio,  heightRatio,  0 }; //右上
     
-    const GLfloat originVertices[] = {
-        -1, -1, 0,   //左下
-        1,  -1, 0,   //右下
-        -1, 1,  0,   //左上
-        1,  1,  0 }; //右上
+//    const GLfloat originVertices[] = {
+//        -1, -1, 0,   //左下
+//        1,  -1, 0,   //右下
+//        -1, 1,  0,   //左上
+//        1,  1,  0 }; //右上
     
     glEnableVertexAttribArray(_positionSlot2);
     glVertexAttribPointer(_positionSlot2, 3, GL_FLOAT, GL_FALSE, 0, vertices);
@@ -290,26 +290,32 @@
 
 - (void)activeTexture {
     
-    
     glActiveTexture(GL_TEXTURE5);
     glBindTexture(GL_TEXTURE_2D, texName);
     glUniform1i(_textureSlot, 5);
+    
 }
 
 - (IBAction)valueChanged:(UISlider *)sender {
-    glBindFramebuffer(GL_FRAMEBUFFER, _offscreenFramebuffer);
+    // 让OpenGL绑定亮度的framebuffer
+    glBindFramebuffer(GL_FRAMEBUFFER, _brightnessFramebuffer);
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
     glViewport(0, 0, (GLsizei)processImage.size.width, (GLsizei)processImage.size.height);
     
+    // 使用亮度shader
     [brightnessShader prepareToDraw];
-    
+    // 传递调节亮度的值区间 (-1 - 1)
     glUniform1f(_brightness, sender.value);
-    [self activeTexture];
+    // 传递原始纹理数据
+    glActiveTexture(GL_TEXTURE5);
+    glBindTexture(GL_TEXTURE_2D, texName);
+    glUniform1i(_textureSlot, 5);
     
+    // 开始绘制
     [self drawRawImage];
     
-    UIImage *brightnessImage = [self getImageFromBuffe:(int)processImage.size.width withHeight:(int)processImage.size.height];
+    // 绘制纹理完毕，开始绘制到屏幕上
     
     [self renderToScreen];
     
@@ -344,7 +350,8 @@
 }
 
 - (IBAction)getImage:(id)sender {
-    glBindFramebuffer(GL_FRAMEBUFFER, _offscreenFramebuffer);
+    
+    glBindFramebuffer(GL_FRAMEBUFFER, _brightnessFramebuffer);
     glViewport(0, 0, processImage.size.width, processImage.size.height);
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);

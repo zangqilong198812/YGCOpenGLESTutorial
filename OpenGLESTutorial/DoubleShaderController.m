@@ -18,28 +18,40 @@
     
     GLuint _renderBuffer;
     GLuint _frameBuffer;
-    GLuint _brightness;
-    GLuint _positionSlot;
-    GLuint _textureSlot;
-    GLuint _textureCoordSlot;
+    GLuint _renderPositionSlot;
+    GLuint _renderTextureSlot;
+    GLuint _renderTextureCoordSlot;
     
-    GLuint _positionSlot2;
-    GLuint _textureSlot2;
-    GLuint _textureCoordSlot2;
+    GLuint _brightness;
+    GLuint _brightnessPositionSlot;
+    GLuint _brightnessTextureSlot;
+    GLuint _brightnessTextureCoordSlot;
+    
+    GLuint _saturationPositionSlot;
+    GLuint _saturationTextureSlot;
+    GLuint _saturationTextureCoordSlot;
+    GLuint _saturation;
     
     GLuint _brightnessFramebuffer;
     GLuint brightnessTexture;
     
+    GLuint _saturationFramebuffer;
+    GLuint saturationTexture;
+    
     UIImage *processImage;
     GLint width;
     GLint height;
-    GLuint texName;
+    GLuint originalTexture;
     
     ZQLShaderCompiler *brightnessShader;
     ZQLShaderCompiler *renderShader;
+    ZQLShaderCompiler *saturationShader;
 }
 @property (weak, nonatomic) IBOutlet UISlider *brightSlider;
 @property (weak, nonatomic) IBOutlet UIButton *getImageButton;
+@property (weak, nonatomic) IBOutlet UISlider *saturationSlider;
+@property (weak, nonatomic) IBOutlet UILabel *saturationLabel;
+@property (weak, nonatomic) IBOutlet UILabel *brightnessLabel;
 
 @end
 
@@ -47,20 +59,22 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
- 
+    
     [self setupOpenGLContext];
     processImage = [UIImage imageNamed:@"wuyanzu.jpg"];
-    texName = [self getTextureFromImage:processImage];
+    originalTexture = [self getTextureFromImage:processImage];
     
     
     [self setupCAEAGLLayer:self.view.bounds];
     [self clearRenderBuffers];
     [self setupRenderBuffers];
     [self createBrightnessFrameBuffer:processImage];
+    [self createSaturationFrameBuffer:processImage];
     [self setupRenderScreenViewPort];
     [self setupRenderShader];
     [self setupBrightnessShader];;
-    [self renderToScreen];
+    [self setupSaturationShader];
+    [self renderToScreenWithTexture:originalTexture];
 }
 
 
@@ -81,7 +95,7 @@
 // step2
 - (void)setupCAEAGLLayer:(CGRect)rect {
     _eaglLayer = [CAEAGLLayer layer];
-    _eaglLayer.frame = rect;
+    _eaglLayer.frame = CGRectInset(self.view.bounds, 0, 40);
     _eaglLayer.backgroundColor = [UIColor yellowColor].CGColor;
     _eaglLayer.opaque = YES;
     
@@ -89,7 +103,9 @@
     [self.view.layer addSublayer:_eaglLayer];
     [self.view bringSubviewToFront:_brightSlider];
     [self.view bringSubviewToFront:_getImageButton];
-    
+    [self.view bringSubviewToFront:_saturationSlider];
+    [self.view bringSubviewToFront:_saturationLabel];
+    [self.view bringSubviewToFront:_brightnessLabel];
     
 }
 
@@ -130,7 +146,7 @@
     glBindFramebuffer(GL_FRAMEBUFFER, _brightnessFramebuffer);
     
     //Create the texture
-   
+    
     glGenTextures(1, &brightnessTexture);
     glBindTexture(GL_TEXTURE_2D, brightnessTexture);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,  image.size.width, image.size.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
@@ -141,6 +157,32 @@
     
     //Bind the texture to your FBO
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, brightnessTexture, 0);
+    
+    //Test if everything failed
+    GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+    if(status != GL_FRAMEBUFFER_COMPLETE) {
+        printf("failed to make complete framebuffer object %x", status);
+    }
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+- (void)createSaturationFrameBuffer:(UIImage *)image {
+    glGenFramebuffers(1, &_saturationFramebuffer);
+    glBindFramebuffer(GL_FRAMEBUFFER, _saturationFramebuffer);
+    
+    //Create the texture
+    
+    glGenTextures(1, &saturationTexture);
+    glBindTexture(GL_TEXTURE_2D, saturationTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,  image.size.width, image.size.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    
+    //Bind the texture to your FBO
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, saturationTexture, 0);
     
     //Test if everything failed
     GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
@@ -162,27 +204,36 @@
 - (void)setupBrightnessShader {
     brightnessShader = [[ZQLShaderCompiler alloc] initWithVertexShader:@"vertexShader.vsh" fragmentShader:@"Brightness_GL.fsh"];
     [brightnessShader prepareToDraw];
-    _positionSlot = [brightnessShader attributeIndex:@"a_Position"];
-    _textureSlot = [brightnessShader uniformIndex:@"u_Texture"];
-    _textureCoordSlot = [brightnessShader attributeIndex:@"a_TexCoordIn"];
+    _brightnessPositionSlot = [brightnessShader attributeIndex:@"a_Position"];
+    _brightnessTextureSlot = [brightnessShader uniformIndex:@"u_Texture"];
+    _brightnessTextureCoordSlot = [brightnessShader attributeIndex:@"a_TexCoordIn"];
     _brightness = [brightnessShader uniformIndex:@"brightness"];
+}
+
+- (void)setupSaturationShader {
+     saturationShader = [[ZQLShaderCompiler alloc] initWithVertexShader:@"vertexShader.vsh" fragmentShader:@"Saturation.fsh"];
+    [saturationShader prepareToDraw];
+    _saturationPositionSlot = [saturationShader attributeIndex:@"a_Position"];
+    _saturationTextureSlot = [saturationShader uniformIndex:@"u_Texture"];
+    _saturationTextureCoordSlot = [saturationShader attributeIndex:@"a_TexCoordIn"];
+    _saturation = [saturationShader uniformIndex:@"saturation"];
 }
 
 - (void)setupRenderShader {
     renderShader = [[ZQLShaderCompiler alloc] initWithVertexShader:@"vertexShader.vsh" fragmentShader:@"fragmentShader.fsh"];
     [renderShader prepareToDraw];
-    _positionSlot2 = [renderShader attributeIndex:@"a_Position"];
-    _textureSlot2 = [renderShader uniformIndex:@"u_Texture"];
-    _textureCoordSlot2 = [renderShader attributeIndex:@"a_TexCoordIn"];
-
+    _renderPositionSlot = [renderShader attributeIndex:@"a_Position"];
+    _renderTextureSlot = [renderShader uniformIndex:@"u_Texture"];
+    _renderTextureCoordSlot = [renderShader attributeIndex:@"a_TexCoordIn"];
+    
 }
 
 // step8
-- (void)renderToScreen {
+- (void)renderToScreenWithTexture:(GLuint)texture {
     glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer);
     [self setupRenderScreenViewPort];
     [renderShader prepareToDraw];
-
+    
     UIImage *image = processImage;
     CGRect realRect = AVMakeRectWithAspectRatioInsideRect(image.size, self.view.bounds);
     CGFloat widthRatio = realRect.size.width/self.view.bounds.size.width;
@@ -194,14 +245,8 @@
         -widthRatio, heightRatio,  0,   //左上
         widthRatio,  heightRatio,  0 }; //右上
     
-//    const GLfloat originVertices[] = {
-//        -1, -1, 0,   //左下
-//        1,  -1, 0,   //右下
-//        -1, 1,  0,   //左上
-//        1,  1,  0 }; //右上
-    
-    glEnableVertexAttribArray(_positionSlot2);
-    glVertexAttribPointer(_positionSlot2, 3, GL_FLOAT, GL_FALSE, 0, vertices);
+    glEnableVertexAttribArray(_renderPositionSlot);
+    glVertexAttribPointer(_renderPositionSlot, 3, GL_FLOAT, GL_FALSE, 0, vertices);
     
     // normal
     static const GLfloat coords[] = {
@@ -210,30 +255,27 @@
         0, 1,
         1, 1
     };
-    glEnableVertexAttribArray(_textureCoordSlot2);
-    glVertexAttribPointer(_textureCoordSlot2, 2, GL_FLOAT, GL_FALSE, 0, coords);
+    glEnableVertexAttribArray(_renderTextureCoordSlot);
+    glVertexAttribPointer(_renderTextureCoordSlot, 2, GL_FLOAT, GL_FALSE, 0, coords);
     
     
     glActiveTexture(GL_TEXTURE5);
-    glBindTexture(GL_TEXTURE_2D, brightnessTexture);
-    glUniform1i(_textureSlot2, 5);
-
-  
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glUniform1i(_renderTextureSlot, 5);
     
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     [_eaglContext presentRenderbuffer:GL_RENDERBUFFER];
 }
 
-- (void)drawRawImage {
-   // [self activeTexture];
+- (void)drawBrightnessRawImage {
     
     const GLfloat vertices[] = {
         -1, -1, 0,   //左下
         1,  -1, 0,   //右下
         -1, 1,  0,   //左上
         1,  1,  0 }; //右上
-    glEnableVertexAttribArray(_positionSlot);
-    glVertexAttribPointer(_positionSlot, 3, GL_FLOAT, GL_FALSE, 0, vertices);
+    glEnableVertexAttribArray(_brightnessPositionSlot);
+    glVertexAttribPointer(_brightnessPositionSlot, 3, GL_FLOAT, GL_FALSE, 0, vertices);
     
     // normal
     static const GLfloat coords[] = {
@@ -243,11 +285,36 @@
         1, 1
     };
     
-    glEnableVertexAttribArray(_textureCoordSlot);
-    glVertexAttribPointer(_textureCoordSlot, 2, GL_FLOAT, GL_FALSE, 0, coords);
+    glEnableVertexAttribArray(_brightnessTextureCoordSlot);
+    glVertexAttribPointer(_brightnessTextureCoordSlot, 2, GL_FLOAT, GL_FALSE, 0, coords);
     
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    
+}
 
+- (void)drawSaturationRawImage {
+    
+    const GLfloat vertices[] = {
+        -1, -1, 0,   //左下
+        1,  -1, 0,   //右下
+        -1, 1,  0,   //左上
+        1,  1,  0 }; //右上
+    glEnableVertexAttribArray(_saturationPositionSlot);
+    glVertexAttribPointer(_saturationPositionSlot, 3, GL_FLOAT, GL_FALSE, 0, vertices);
+    
+    // normal
+    static const GLfloat coords[] = {
+        0, 0,
+        1, 0,
+        0, 1,
+        1, 1
+    };
+    
+    glEnableVertexAttribArray(_saturationTextureCoordSlot);
+    glVertexAttribPointer(_saturationTextureCoordSlot, 2, GL_FLOAT, GL_FALSE, 0, coords);
+    
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    
 }
 
 #pragma mark - Texture
@@ -291,12 +358,12 @@
 - (void)activeTexture {
     
     glActiveTexture(GL_TEXTURE5);
-    glBindTexture(GL_TEXTURE_2D, texName);
-    glUniform1i(_textureSlot, 5);
-    
+    glBindTexture(GL_TEXTURE_2D, originalTexture);
+    glUniform1i(_renderTextureSlot, 5);
+
 }
 
-- (IBAction)valueChanged:(UISlider *)sender {
+- (IBAction)brightnessValueChanged:(UISlider *)sender {
     // 让OpenGL绑定亮度的framebuffer
     glBindFramebuffer(GL_FRAMEBUFFER, _brightnessFramebuffer);
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
@@ -309,16 +376,39 @@
     glUniform1f(_brightness, sender.value);
     // 传递原始纹理数据
     glActiveTexture(GL_TEXTURE5);
-    glBindTexture(GL_TEXTURE_2D, texName);
-    glUniform1i(_textureSlot, 5);
+    glBindTexture(GL_TEXTURE_2D, originalTexture);
+    glUniform1i(_brightnessTextureSlot, 5);
     
     // 开始绘制
-    [self drawRawImage];
+    [self drawBrightnessRawImage];
     
     // 绘制纹理完毕，开始绘制到屏幕上
     
-    [self renderToScreen];
+    [self renderToScreenWithTexture:brightnessTexture];
     
+}
+
+- (IBAction)saturationValueChanged:(UISlider *)sender {
+    glBindFramebuffer(GL_FRAMEBUFFER, _saturationFramebuffer);
+    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glViewport(0, 0, (GLsizei)processImage.size.width, (GLsizei)processImage.size.height);
+    
+    // 使用对比度shader
+    [saturationShader prepareToDraw];
+    // 传递调节对比度的值区间 (0 - 2)
+    glUniform1f(_saturation, sender.value);
+    // 传递原始纹理数据
+    glActiveTexture(GL_TEXTURE5);
+    glBindTexture(GL_TEXTURE_2D, brightnessTexture);
+    glUniform1i(_saturationTextureSlot, 5);
+    
+    // 开始绘制
+    [self drawSaturationRawImage];
+    
+    // 绘制纹理完毕，开始绘制到屏幕上
+    
+    [self renderToScreenWithTexture:saturationTexture];
 }
 
 - (UIImage *)getImageFromBuffe:(int)width withHeight:(int)height {
@@ -349,24 +439,24 @@
     return image;
 }
 
-- (IBAction)getImage:(id)sender {
-    
-    glBindFramebuffer(GL_FRAMEBUFFER, _brightnessFramebuffer);
-    glViewport(0, 0, processImage.size.width, processImage.size.height);
-    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
-    
-    [brightnessShader prepareToDraw];
-    
-    glUniform1f(_brightness, _brightSlider.value);
-    [self activeTexture];
-    
-    [self drawRawImage];
-    
-    glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer);
-    [self setupRenderScreenViewPort];
-    
-    //[self getImageFromBuffe:processImage.size.width withHeight:processImage.size.height];
-}
+//- (IBAction)getImage:(id)sender {
+//    
+//    glBindFramebuffer(GL_FRAMEBUFFER, _brightnessFramebuffer);
+//    glViewport(0, 0, processImage.size.width, processImage.size.height);
+//    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+//    glClear(GL_COLOR_BUFFER_BIT);
+//    
+//    [brightnessShader prepareToDraw];
+//    
+//    glUniform1f(_brightness, _brightSlider.value);
+//    [self activeTexture];
+//    
+//    [self drawRawImage];
+//    
+//    glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer);
+//    [self setupRenderScreenViewPort];
+//    
+//    //[self getImageFromBuffe:processImage.size.width withHeight:processImage.size.height];
+//}
 
 @end

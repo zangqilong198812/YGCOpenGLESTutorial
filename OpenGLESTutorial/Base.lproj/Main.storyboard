@@ -50,33 +50,51 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" minValue="-1" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="ZNU-hp-KGj">
-                                <rect key="frame" x="32" y="616" width="311" height="31"/>
+                            <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="1" minValue="0.0" maxValue="2" translatesAutoresizingMaskIntoConstraints="NO" id="ZNU-hp-KGj">
+                                <rect key="frame" x="48" y="616" width="279" height="31"/>
                                 <connections>
-                                    <action selector="valueChanged:" destination="BYZ-38-t0r" eventType="valueChanged" id="cVI-9S-YBx"/>
+                                    <action selector="saturationValueChanged:" destination="BYZ-38-t0r" eventType="touchUpInside" id="3pC-XH-nM3"/>
                                 </connections>
                             </slider>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jXg-gi-LEA">
-                                <rect key="frame" x="286" y="24" width="65" height="30"/>
-                                <state key="normal" title="getImage"/>
+                            <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" minValue="-1" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="PIp-5i-MH7">
+                                <rect key="frame" x="48" y="567" width="279" height="31"/>
                                 <connections>
-                                    <action selector="getImage:" destination="BYZ-38-t0r" eventType="touchUpInside" id="unQ-X2-ylY"/>
+                                    <action selector="brightnessValueChanged:" destination="BYZ-38-t0r" eventType="touchUpInside" id="CTd-dl-12P"/>
                                 </connections>
-                            </button>
+                            </slider>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="亮度" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HDz-aK-yqG">
+                                <rect key="frame" x="15" y="572" width="35" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="对比度" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jQp-sg-NE6">
+                                <rect key="frame" x="-2" y="621" width="52" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="jXg-gi-LEA" secondAttribute="trailing" constant="24" id="42L-Hc-wx5"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="ZNU-hp-KGj" secondAttribute="bottom" constant="21" id="Inp-oH-4kA"/>
-                            <constraint firstItem="ZNU-hp-KGj" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="34" id="Wxt-Zm-cua"/>
-                            <constraint firstItem="jXg-gi-LEA" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" constant="24" id="Xio-92-vqm"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="ZNU-hp-KGj" secondAttribute="trailing" constant="34" id="i6R-8s-PBU"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="ZNU-hp-KGj" secondAttribute="bottom" constant="21" id="0j9-S2-RLo"/>
+                            <constraint firstItem="PIp-5i-MH7" firstAttribute="leading" secondItem="ZNU-hp-KGj" secondAttribute="leading" id="2cn-BX-Imh"/>
+                            <constraint firstItem="ZNU-hp-KGj" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="50" id="4CN-VC-kVI"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="ZNU-hp-KGj" secondAttribute="trailing" constant="50" id="8Of-Os-tsj"/>
+                            <constraint firstItem="PIp-5i-MH7" firstAttribute="trailing" secondItem="ZNU-hp-KGj" secondAttribute="trailing" id="FW3-TM-uoe"/>
+                            <constraint firstItem="ZNU-hp-KGj" firstAttribute="leading" secondItem="jQp-sg-NE6" secondAttribute="trailing" id="GvM-gy-DvI"/>
+                            <constraint firstItem="PIp-5i-MH7" firstAttribute="leading" secondItem="HDz-aK-yqG" secondAttribute="trailing" id="JxH-CI-ZZ6"/>
+                            <constraint firstItem="jQp-sg-NE6" firstAttribute="centerY" secondItem="ZNU-hp-KGj" secondAttribute="centerY" id="VT1-LN-AQa"/>
+                            <constraint firstItem="ZNU-hp-KGj" firstAttribute="top" secondItem="PIp-5i-MH7" secondAttribute="bottom" constant="19" id="mXe-8W-4PP"/>
+                            <constraint firstItem="HDz-aK-yqG" firstAttribute="centerY" secondItem="PIp-5i-MH7" secondAttribute="centerY" id="s2V-1P-it9"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <connections>
-                        <outlet property="brightSlider" destination="ZNU-hp-KGj" id="Woi-SG-MsP"/>
-                        <outlet property="getImageButton" destination="jXg-gi-LEA" id="s62-Iz-8LW"/>
+                        <outlet property="brightSlider" destination="PIp-5i-MH7" id="OgZ-mw-faF"/>
+                        <outlet property="brightnessLabel" destination="HDz-aK-yqG" id="Don-Gp-qFc"/>
+                        <outlet property="saturationLabel" destination="jQp-sg-NE6" id="Udw-x6-98i"/>
+                        <outlet property="saturationSlider" destination="ZNU-hp-KGj" id="364-e5-03C"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
